@@ -1,5 +1,5 @@
 {
-  "name": "universal-clipboard-bridge",
+  "name": "universal-clipboard-mcp",
   "version": "0.1.0",
   "description": "An MCP server for seamless content transfer and format conversion.",
   "main": "dist/index.js",
