@@ -160,26 +160,15 @@ export function notionToGitHub(blocks: NotionBlock[]): string {
     .join('\\n\\n');
 }
 
+import jira2md from 'jira2md';
+const markdownToAdf = require('md-to-adf');
+
 // --- JIRA <-> Linear/GitHub ---
 
 export function jiraToLinear(jiraText: string): string {
-  // Placeholder for JIRA to Linear/GitHub conversion
-  console.log('Converting JIRA to Linear/GitHub...');
-  return jiraText
-    .replace(/h1\./g, '#')
-    .replace(/h2\./g, '##')
-    .replace(/h3\./g, '###')
-    .replace(/\{code\}/g, '```')
-    .replace(/\[(.*?)\|(.*?)\]/g, '[$1]($2)'); // Links
+  return jira2md.to_markdown(jiraText);
 }
 
 export function linearToJira(linearText: string): string {
-  // Placeholder for Linear/GitHub to JIRA conversion
-  console.log('Converting Linear/GitHub to JIRA...');
-  return linearText
-    .replace(/^# /g, 'h1. ')
-    .replace(/^## /g, 'h2. ')
-    .replace(/^### /g, 'h3. ')
-    .replace(/```/g, '{code}')
-    .replace(/\\[(.*?)\\]\\((.*?)\\)/g, '[$1|$2]'); // Links
+  return JSON.stringify(markdownToAdf(linearText));
 }

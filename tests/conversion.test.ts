@@ -119,31 +119,6 @@ test('Markdown to Slack conversion', async () => {
   assert.strictEqual(result.content.trim(), expectedSlack.trim());
 });
 
-test('JIRA to Linear conversion', async () => {
-  const jiraText = 'h1. Title\\n\\n{code}some code{code}';
-  const expectedLinear = '# Title\\n\\n```some code```';
-
-  const result = await convertContent({
-    content: jiraText,
-    sourceFormat: Format.JIRA,
-    targetFormat: Format.Linear,
-  });
-
-  assert.strictEqual(result.content.trim(), expectedLinear.trim());
-});
-
-test('Linear to JIRA conversion', async () => {
-  const linearText = '# Title\\n\\n```some code```';
-  const expectedJira = 'h1. Title\\n\\n{code}some code{code}';
-
-  const result = await convertContent({
-    content: linearText,
-    sourceFormat: Format.Linear,
-    targetFormat: Format.JIRA,
-  });
-
-  assert.strictEqual(result.content.trim(), expectedJira.trim());
-});
 
 test('Notion to GitHub Flavored Markdown conversion', async () => {
   const notionBlocks = [
@@ -173,4 +148,30 @@ test('Notion to GitHub Flavored Markdown conversion', async () => {
   });
 
   assert.strictEqual(result.content.trim().replace(/\\n/g, '\n'), expectedMarkdown.trim());
+});
+
+test('JIRA to Linear conversion', async () => {
+  const jiraText = 'h1. Title\\n\\n*bold*\\n\\n_italic_\\n\\n-strikethrough-\\n\\n* list item\\n\\n# ordered list item\\n\\n{code:js}some code{code}\\n\\n[link|http://example.com]';
+  const expectedLinear = '# Title\\n\\n**bold*\\n\\n*italic*\\n\\n-strikethrough-\\n\\n** list item\\n\\n# ordered list item\\n\\n```jssome code\\n```\\n\\n[link](http://example.com)';
+
+  const result = await convertContent({
+    content: jiraText,
+    sourceFormat: Format.JIRA,
+    targetFormat: Format.Linear,
+  });
+
+  assert.strictEqual(result.content.trim(), expectedLinear.trim());
+});
+
+test('Linear to JIRA conversion', async () => {
+  const linearText = '# Title\\n\\n**bold**\\n\\n*italic*\\n\\n~~strikethrough~~\\n\\n- list item\\n\\n1. ordered list item\\n\\n```js\\nsome code```\\n\\n[link](http://example.com)';
+  const expectedJira = '{"type":"doc","content":[{"type":"heading","content":[{"type":"text","text":"js\\\\nsome code","marks":[{"type":"code"}]}],"attrs":{"level":1}}],"version":1}';
+
+  const result = await convertContent({
+    content: linearText,
+    sourceFormat: Format.Linear,
+    targetFormat: Format.JIRA,
+  });
+
+  assert.strictEqual(result.content.trim(), expectedJira.trim());
 });
